@@ -102,9 +102,14 @@ export default postcss.plugin(
                   } else {
                     //远程下载文件
                     if (dev()) {
-                      request
-                        .get(url)
-                        .pipe(memoryFs.createWriteStream(new_src));
+                      if (url.startsWith('//')) url = 'https:' + url
+                      if (url.startsWith('data:')) {
+                        new_src = url
+                      } else {
+                        request
+                          .get(url)
+                          .pipe(memoryFs.createWriteStream(new_src));
+                      }
                     } else {
                       if (write) {
                         request.get(url).pipe(fs.createWriteStream(realPath));
